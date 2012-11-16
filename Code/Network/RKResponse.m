@@ -113,6 +113,8 @@ return __VA_ARGS__;                                                             
 - (BOOL)isServerTrusted:(SecTrustRef)trust
 {
     BOOL proceed = NO;
+#warning FIXME workaround for NTLM authentication
+    return YES;
 
     if (_request.disableCertificateValidation) {
         proceed = YES;
@@ -173,14 +175,22 @@ return __VA_ARGS__;                                                             
 {
     RKResponseIgnoreDelegateIfCancelled(NO);
     RKLogDebug(@"Asked if canAuthenticateAgainstProtectionSpace: with authenticationMethod = %@", [space authenticationMethod]);
+#warning FIXME workaround for NTLM authentication
+    if([[space authenticationMethod] isEqualToString:NSURLAuthenticationMethodNTLM]) {
+        return YES;
+    }
+    
     if ([[space authenticationMethod] isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        // server is using an SSL certificate that the OS can't validate
-        // see whether the client settings allow validation here
-        if (_request.disableCertificateValidation || [_request.additionalRootCertificates count] > 0) {
-            return YES;
-        } else {
-            return NO;
-        }
+#warning FIXME workaround for NTLM authentication
+        return YES;
+        
+//        // server is using an SSL certificate that the OS can't validate
+//        // see whether the client settings allow validation here
+//        if (_request.disableCertificateValidation || [_request.additionalRootCertificates count] > 0) {
+//            return YES;
+//        } else {
+//            return NO;
+//        }
     }
 
     // Handle non-SSL challenges
