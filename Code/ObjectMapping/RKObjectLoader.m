@@ -420,9 +420,12 @@
         // If we failed due to a transport error or before we have a response, the request itself failed
         if (!self.response || [self.response isFailure]) {
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:RKRequestDidFailWithErrorNotificationUserInfoErrorKey];
-            [[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFailWithErrorNotification
-                                                                object:self
-                                                              userInfo:userInfo];
+#warning FIXME workaround for randomly crashes
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFailWithErrorNotification
+                                                                    object:self
+                                                                  userInfo:userInfo];
+            });
         }
 
         if (! self.isCancelled) {

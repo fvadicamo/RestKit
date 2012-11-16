@@ -664,14 +664,20 @@ RKRequestMethod RKRequestMethodTypeFromName(NSString *methodName) {
 
 
         NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error forKey:RKRequestDidFailWithErrorNotificationUserInfoErrorKey];
-        [[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFailWithErrorNotification
+#warning FIXME workaround for randomly crashes
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFailWithErrorNotification
                                                             object:self
                                                           userInfo:userInfo];
+        });
     }
 
     // NOTE: This notification must be posted last as the request queue releases the request when it
     // receives the notification
-    [[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFinishLoadingNotification object:self];
+#warning FIXME workaround for randomly crashes
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:RKRequestDidFinishLoadingNotification object:self];
+    });
 }
 
 - (void)updateInternalCacheDate
