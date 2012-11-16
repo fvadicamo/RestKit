@@ -139,7 +139,8 @@
 
 - (void)deleteCachedObjectsMissingFromResult:(RKObjectMappingResult *)result
 {
-    if (! [self isGET]) {
+#warning FIXME workaround for using GET request without deletions
+    if (![self isGET] && ![self.userData isKindOfClass:[NSManagedObjectContext class]]) {
         RKLogDebug(@"Skipping cleanup of objects via managed object cache: only used for GET requests.");
         return;
     }
